@@ -46,3 +46,6 @@ http_A: ## call http script defined in service-a/http
 
 http_B:  ## call http script defined in service-b/http 
 	FILENAME="/data/http/service-b/$(RUN_ARGS)" docker compose up httpyac
+
+test_A:
+	docker compose --env-file=${DEV_ENV} exec service_a npm run test:e2e

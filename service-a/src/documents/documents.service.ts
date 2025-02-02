@@ -1,4 +1,10 @@
-import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DocumentsRepository } from './documents.repository';
 import { PrismaErrorCodes } from 'src/constants';
@@ -33,6 +39,12 @@ export class DocumentsService {
         return document;
       })
       .catch((err) => {
+        if (err instanceof Prisma.PrismaClientKnownRequestError)
+          switch (err.code) {
+            case PrismaErrorCodes.INCONSISTENT_DATA:
+              throw new BadRequestException(`Id="${id}" is not a UUID`);
+          }
+
         throw new InternalServerErrorException(
           `An unexpected problem occured while fetching document="${id}"; original error: ${inspect(err)}`,
         );
@@ -53,12 +65,14 @@ export class DocumentsService {
     this.logger.log(`Updating document="${id}" with title="${data.title}"`);
 
     return this.docsRepository.update(id, data).catch((err) => {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === PrismaErrorCodes.OPEARATION_DEPENDS_ON_MISSING
-      ) {
-        throw new NotFoundException(`Document not found with id="${id}"`);
-      }
+      if (err instanceof Prisma.PrismaClientKnownRequestError)
+        switch (err.code) {
+          case PrismaErrorCodes.OPEARATION_DEPENDS_ON_MISSING:
+            throw new NotFoundException(`Document not found with id="${id}"`);
+          case PrismaErrorCodes.INCONSISTENT_DATA:
+            throw new BadRequestException(`Id="${id}" is not a UUID`);
+        }
+
       throw new InternalServerErrorException(
         `An unexpected problem occured while updating document="${id}"; original error: ${inspect(err)}`,
       );
@@ -69,12 +83,14 @@ export class DocumentsService {
     this.logger.log(`Deleting document="${id}"`);
 
     return this.docsRepository.delete(id).catch((err) => {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === PrismaErrorCodes.OPEARATION_DEPENDS_ON_MISSING
-      ) {
-        throw new NotFoundException(`Document not found with id="${id}"`);
-      }
+      if (err instanceof Prisma.PrismaClientKnownRequestError)
+        switch (err.code) {
+          case PrismaErrorCodes.OPEARATION_DEPENDS_ON_MISSING:
+            throw new NotFoundException(`Document not found with id="${id}"`);
+          case PrismaErrorCodes.INCONSISTENT_DATA:
+            throw new BadRequestException(`Id="${id}" is not a UUID`);
+        }
+
       throw new InternalServerErrorException(
         `An unexpected problem occured while deleting document="${id}"; original error: ${inspect(err)}`,
       );

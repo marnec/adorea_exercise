@@ -19,7 +19,7 @@ export class AuthService {
 
   async signup(dto: SignupDto): Promise<CredentialsDto> {
     this.logger.log(`Signing up new user with email="${dto.email}"`);
-    
+
     const hashedPassword = await bcrypt.hash(dto.password, saltRounds);
 
     return this.userRepository
@@ -51,9 +51,9 @@ export class AuthService {
 
         const isPasswordValid = bcrypt.compare(dto.password, user.password);
 
-        return { user, isPasswordValid };
+        return Promise.all([user, isPasswordValid]);
       })
-      .then(({ user, isPasswordValid }) => {
+      .then(([user, isPasswordValid]) => {
         if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
 
         const token = this.generateToken(user.id, user.email);
