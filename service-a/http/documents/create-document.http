@@ -1,0 +1,8 @@
+# @import ../auth/login.http
+# @ref login
+# @name create-document
+POST {{SERVICE_A_HOST}}/v1/documents
+Content-Type: application/json
+Authorization: Bearer {{login.token}}
+
+<@ ./document2.json

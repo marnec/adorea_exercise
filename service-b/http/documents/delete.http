@@ -1,0 +1,4 @@
+# @name createDocument
+DELETE {{SERVICE_B_HOST}}/v1/documents/remote/d322d4a9-553d-4f0e-9300-b5605734ef38
+Content-Type: application/json
+Authorization: Basic alongi@email.com:12345678

@@ -1,0 +1,4 @@
+# @name syncMany
+PUT {{SERVICE_B_HOST}}/v1/documents/sync
+Content-Type: application/json
+Authorization: Basic alongi@email.com:12345678

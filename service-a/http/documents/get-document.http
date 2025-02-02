@@ -1,0 +1,9 @@
+# @import ../auth/login.http
+# @import ./get-list.http
+# @ref login
+# @ref getList
+# @name getDocument
+GET {{SERVICE_A_HOST}}/v1/documents/{{getList[0].id}}
+Content-Type: application/json
+Authorization: Bearer {{login.token}}
+

@@ -1,0 +1,5 @@
+# @name login
+POST {{SERVICE_A_HOST}}/v1/auth/login
+Content-Type: application/json
+
+<@ ./user1.json

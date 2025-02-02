@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  service_a:
+    build:
+      context: ./service-a
+      dockerfile: Dockerfile
+      target: $ENV
+    image: service-a:${ENV}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./service-a:/app
+    environment:
+      NODE_ENV: $ENV
+      DATABASE_URL: postgresql://$DB_USER_A:$DB_PSWD_A@db_a:5432/$DB_NAME_A
+      JWT_SECRET: $JWT_SECRET
+    networks:
+      - local_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on: 
+      db_a:
+        condition: service_healthy
+
+  db_a:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: $DB_USER_A
+      POSTGRES_PASSWORD: $DB_PSWD_A
+      POSTGRES_DB: $DB_NAME_A
+    ports:
+      - "5432:5432"
+    volumes:
+      - adorea_volume_a:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d $DB_NAME_A"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - local_network
+  
+  service_b:
+    build:
+      context: ./service-b
+      dockerfile: Dockerfile
+      target: $ENV
+    image: service-b:${ENV}
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./service-b:/app
+    environment:
+      NODE_ENV: $ENV
+      DATABASE_URL: postgresql://${DB_USER_B}:${DB_PSWD_B}@db_b:5432/${DB_NAME_B}
+      JWT_SECRET: $JWT_SECRET
+      SERVICE_A_HOST: $SERVICE_A_HOST
+      SERVICE_A_API_VERSION: $SERVICE_A_API_VERSION
+      SERVICE_A_DOCS_PATH: $SERVICE_A_DOCS_PATH
+      SERVICE_A_AUTH_PATH: $SERVICE_A_AUTH_PATH
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - local_network
+    depends_on: 
+      db_b:
+        condition: service_healthy
+
+  db_b:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: $DB_USER_B
+      POSTGRES_PASSWORD: $DB_PSWD_B
+      POSTGRES_DB: $DB_NAME_B
+    ports:
+      - "5433:5432"
+    volumes:
+      - adorea_volume_b:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d $DB_NAME_B"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - local_network
+
+  httpyac:
+    image: ghcr.io/anweber/httpyac:latest
+    volumes:
+      - ./service-a/http:/data/http/service-a
+      - ./service-b/http:/data/http/service-b
+      - .env.production:/data/.env
+      - /dev/null:/data/http/service-a/.env
+      - /dev/null:/data/http/service-b/.env
+    command: ["-e", "/data/.env", "-a", "$FILENAME"]
+    environment:
+      FILENAME: $FILENAME
+    networks:
+      - local_network
+
+volumes:
+  adorea_volume_a:  
+  adorea_volume_b:
+
+networks:
+  local_network:
+    driver: bridge
