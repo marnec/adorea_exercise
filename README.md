@@ -28,7 +28,7 @@ There is quite a lot going on but I figured we can discuss it in the third inter
 
 - You can start the dev mode if you need with `make dev`. It targets a different stage of the docker file and produces an image tagged with `development` so you should be able to go back and forth between them freely
 
--  I wrote e2e test of service A as a demonstrative example of how I would make tests. Unit tests are missing and also the e2e test for service B is missing. Writing e2e test for service B would have meant also writing a mock of service B and mocking different type of responses that are expected from service B.
+-  I wrote e2e test of service A as a demonstrative example of how I would make tests. Unit tests are missing and also the e2e test for service B is missing. Writing e2e test for service B would have meant also writing a mock of service A and mocking different type of responses that are expected from service A.
 
 - I tried out prisma, I usually don't use it. I don't know if I did something in the wrong way
 
