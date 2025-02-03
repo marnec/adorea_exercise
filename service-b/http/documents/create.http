@@ -1,8 +1,8 @@
 # @name createDocument
-PUT {{SERVICE_A_HOST}}/v1/documents/remote
+PUT {{SERVICE_B_HOST}}/v1/documents/remote
 Content-Type: application/json
 Authorization: Basic alongi@email.com:12345678
 
 {
-    "title": "Via Brombeis"
+    "title": "il mio cuore che ti lascio"
 }

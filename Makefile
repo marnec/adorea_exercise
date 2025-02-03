@@ -33,7 +33,7 @@ stop: ## stop all containers in compose (env independent)
 	docker compose down
 
 start: ## start production env
-	docker compose --env-file=${PROD_ENV} up -d --build
+	docker compose -f=docker-compose.production.yml --env-file=${PROD_ENV} up -d --build
 
 logs_A: ## show logs of service A (follows)
 	docker compose logs -f service_a

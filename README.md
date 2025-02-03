@@ -28,6 +28,8 @@ There is quite a lot going on but I figured we can discuss it in the third inter
 
 - You can start the dev mode if you need with `make dev`. It targets a different stage of the docker file and produces an image tagged with `development` so you should be able to go back and forth between them freely
 
+-  I wrote e2e test of service A as a demonstrative example of how I would make tests. Unit tests are missing and also the e2e test for service B is missing. Writing e2e test for service B would have meant also writing a mock of service B and mocking different type of responses that are expected from service B.
+
 - I tried out prisma, I usually don't use it. I don't know if I did something in the wrong way
 
 - I also tried out httpYac, I like the idea of having these kind of things on simple text files because they can be versioned together with the code
@@ -45,3 +47,7 @@ There is quite a lot going on but I figured we can discuss it in the third inter
 - I don't like comments very much because they can lie. Code can never lie.
 
 - I like having a repository layer even if sometimes it looks redundant. Ask me about it if I forget to tell you during the interview.
+
+- I have mixed feelings about async/await syntax and you'll notice I preferred mostyl .then.catch syntax. This is because I think that littering the codebase with try/catch make it much less readable and also prods you towards wrapping everithing in one big try/catch. Ask me about this if you are interested.
+
+- In service B when an error arise and is not an expected http error from service A, it's thrown as an internal-server-error. I intentionally left one case uncatched so you can check how it is displayed. It's the 400 BAD_RESPONSE on get-document, update-document, delete-document. To trigger it you need to pass an id that cannot be casted to UUID. Service A will throw a 400 and service B will rethrow an 500. 

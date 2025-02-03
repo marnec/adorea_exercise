@@ -2,4 +2,4 @@
 POST {{SERVICE_A_HOST}}/v1/auth/signup
 Content-Type: application/json
 
-<@ ./user2.json
+<@ ./user1.json

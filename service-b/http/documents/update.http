@@ -1,5 +1,5 @@
 # @name updateDocument
-PUT {{SERVICE_B_HOST}}/v1/documents/remote/d322d4a9-553d-4f0e-9300-b5605734ef38
+PUT {{SERVICE_B_HOST}}/v1/documents/remote/b55ca251-1080-48cf-87ee-7ab7de218e37
 Content-Type: application/json
 Authorization: Basic alongi@email.com:12345678
 
